@@ -31,21 +31,16 @@ chrome.webRequest.onBeforeRequest.addListener(
                         var type = nlfe[1];
                         var node = nlfe[2];
                         var pkey = nlfe[3];
-                        var lpfx = ({embed: 'E', folder: 'F', drop: 'D'})[type] || '';
-
-                        if (pkey && type === 'folder') {
-                            pkey = pkey.replace('/folder/', '!').replace('/file/', '?');
-                        }
+                        var lpfx = ({embed: 'E', drop: 'D'})[type] || '';
+                        
                         hash = '#' + lpfx + '!' + node + (pkey ? '!' + pkey : '');
                     }
                     else if (url.indexOf('://mega.nz/chat/') > -1) {
                         hash = '#' + path;
                     }
-                    else if (url.indexOf('/folder/') > -1) {
-                        hash = '#/' + path;
-                    }
-                    else if (url.indexOf('/file/') > -1) {
-                        hash = '#/' + path;
+                    else if (url.indexOf('/folder/') > -1 || url.indexOf('/file/') > -1) {
+                        var uri = new URL(url);
+                        hash = '#' + uri.pathname + uri.hash;
                     }
                     else {
                         hash = '#' + url.split('#')[1];
